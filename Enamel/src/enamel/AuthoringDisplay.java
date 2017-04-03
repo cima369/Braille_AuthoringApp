@@ -42,11 +42,14 @@ public class AuthoringDisplay
 		SpringLayout layout = new SpringLayout ();
 		nodes = new ArrayList <SectionNode> ();
 		
+		//When initialized, creates a blank scenario file
 		newFile ();
-		q = new ArrayDeque <SectionNode> ();
+	/*	q = new ArrayDeque <SectionNode> ();
 		numLines = 0;
 		highlightLocation = 0;
 		update = 0;
+		highlighter = field.getHighlighter();
+		highlight (); */
 		/*
 		try
 		{
@@ -145,7 +148,8 @@ public class AuthoringDisplay
 			String[] additional = {"Add 'Set voice'", "Add 'Repeat button'", "Add 'Display cell pins'", 
 					"Add 'Raise one pin'", "Add 'Lower one pin'", "Add 'Clear one cell'"};
 			highlightLocation = 0;
-			
+			highlighter = field.getHighlighter();
+			highlight ();
 			
 			field.setFont(new Font ("Serif", Font.PLAIN, 16));
 			field.setLineWrap (true);
@@ -154,8 +158,7 @@ public class AuthoringDisplay
 			field.setEditable(false);
 			textPane.add(scroll);
 				
-			highlighter = field.getHighlighter();
-			highlight ();
+			
 								
 			
 			frame.setSize (603, 560);
@@ -423,6 +426,7 @@ public class AuthoringDisplay
 			
 		}*/
 	
+	//Used to check if the arguments to change the button and cell numbers are valid
 	private boolean checkEdit (String argument)
 	{
 		boolean works = false;
@@ -430,7 +434,7 @@ public class AuthoringDisplay
 	    {
 			works = true;
 	        int args = Integer.parseInt(argument);
-			// Checks to see if the argument is a valid cell number
+			// Checks to see if the argument is a positive integer
 	        if (args <= 0 )
 	        {
 	        	JOptionPane.showMessageDialog(new JFrame (), "Sorry, that argument is incorrect. Expected argument "
@@ -448,6 +452,7 @@ public class AuthoringDisplay
 		return works;
 	}
 	
+	//Creates a new scenario file
 	protected void newFile ()
 	{
 		nodes.clear ();
@@ -457,10 +462,13 @@ public class AuthoringDisplay
 		numLines = 0;
 		highlightLocation = 0;
 		update = 0;
+		highlighter = field.getHighlighter();
 		
 		root.addInfo("Cell " + 1);
 		root.addInfo("Button " + 1);
 		nodes.add(root);
+		field.setText(nodes.get(update).display());
+		highlight();
 	}
 	protected void open (File fileName)
 	{

@@ -103,8 +103,9 @@ public class RevisedApp {
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (JOptionPane.showConfirmDialog(null, "Are you sure you want to create a new file?") == 0) {
-					textAreaBig.setText("");
-					status.setText("Generated New File....."); //the empty text area created is the new file
+					//textAreaBig.setText("");
+					//status.setText("Generated New File....."); //the empty text area created is the new file
+					disp.newFile ();
 				}
 			}
 		});
