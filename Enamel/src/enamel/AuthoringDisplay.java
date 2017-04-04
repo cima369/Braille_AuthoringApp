@@ -463,7 +463,8 @@ public class AuthoringDisplay
 		highlightLocation = 0;
 		update = 0;
 		highlighter = field.getHighlighter();
-		
+		cellNum = 1;
+		buttonNum = 1;
 		root.addInfo("Cell " + 1);
 		root.addInfo("Button " + 1);
 		nodes.add(root);
