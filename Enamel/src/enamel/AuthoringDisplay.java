@@ -18,20 +18,20 @@ public class AuthoringDisplay
 {
 	
 	// Used to store the different sections
-	private  ArrayList <String> identifiers; 
-	private  ArrayList <SectionNode> nodes;
-	private  JTextArea field = new JTextArea (14, 32);
-	private  JFrame frame = new JFrame ();
-	private  SectionNode currNode;
-	private  SectionNode root;
-	private  ArrayDeque <SectionNode> q = new ArrayDeque <SectionNode> ();
-	private  int numLines = 0;
-	private  int highlightLocation = 0;
-	private  Highlighter highlighter;
-	private  String scenarioFilePath;
-	private  int cellNum;
-	private  int buttonNum;
-	private  int update = 0;
+	protected  ArrayList <String> identifiers; 
+	protected  ArrayList <SectionNode> nodes;
+	protected  JTextArea field = new JTextArea (14, 32);
+	protected  JFrame frame = new JFrame ();
+	protected  SectionNode currNode;
+	protected  SectionNode root;
+	protected  ArrayDeque <SectionNode> q = new ArrayDeque <SectionNode> ();
+	protected  int numLines = 0;
+	protected  int highlightLocation = 0;
+	protected  Highlighter highlighter;
+	protected  String scenarioFilePath;
+	protected  int cellNum;
+	protected  int buttonNum;
+	protected  int update = 0;
 
 	
 	public AuthoringDisplay(JFrame fr) 
@@ -427,7 +427,7 @@ public class AuthoringDisplay
 		}*/
 	
 	//Used to check if the arguments to change the button and cell numbers are valid
-	private boolean checkEdit (String argument)
+	protected boolean checkEdit (String argument)
 	{
 		boolean works = false;
 		try
@@ -572,7 +572,7 @@ public class AuthoringDisplay
 		}
 	}
 	//Save function
-	private void save ()
+	protected void save ()
 	{
 		try
 		{
@@ -607,7 +607,7 @@ public class AuthoringDisplay
 	}
 	
 	// Used to update the JTextArea view to the correct node
-	private void updater (String toUpdate)
+	protected void updater (String toUpdate)
 	{
 		try
 		{
@@ -620,7 +620,7 @@ public class AuthoringDisplay
 	}
 
 	// Removes a line from the node
-	private void remove ()
+	protected void remove ()
 	{
 		//Checks to see if there are any lines to remove
 		if (nodes.get(update).getInfo().size () <= 0)
@@ -642,14 +642,14 @@ public class AuthoringDisplay
 	}
 	
 	//Reset the highlight location to the first line
-	private void highlightReset ()
+	protected void highlightReset ()
 	{
 		highlightLocation = 0;
 		numLines = field.getLineCount();
 	}
 	
 	//Creates a map to traverse through the different nodes
-	private void drawMap ()
+	protected void drawMap ()
 	{
 	
 		JFrame frame = new JFrame("Map");
@@ -727,7 +727,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input for the method of the display cell clear is correct
-	private boolean checkDispCellClear (String argument)
+	protected boolean checkDispCellClear (String argument)
 	{
 		boolean works = false;
 		try
@@ -753,7 +753,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input for the method of raise lower is correct
-	private boolean checkRaiseLower (String argument)
+	protected boolean checkRaiseLower (String argument)
 	{
 		boolean works = false;
 		try
@@ -781,7 +781,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input for the method display cell pins is correct
-	private boolean checkDispCellPins (String argument)
+	protected boolean checkDispCellPins (String argument)
 	{
 		boolean works = false;
 		try
@@ -818,7 +818,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input for the method repeat-button is correct
-	private boolean checkRepeatButton (String argument)
+	protected boolean checkRepeatButton (String argument)
 	{
 		boolean works = false;
 		try
@@ -844,7 +844,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input for the method skip-button is correct
-	private boolean checkSkipButton (String argument)
+	protected boolean checkSkipButton (String argument)
 	{
 		boolean works = false;
 		try
@@ -871,7 +871,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input of the display-char method is correct
-	private  boolean checkDispChar (String argument)
+	protected  boolean checkDispChar (String argument)
 	{
 		boolean works = false;
 		try
@@ -901,7 +901,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input of the set-voice method is correct
-	private boolean checkVoice (String argument)
+	protected boolean checkVoice (String argument)
 	{
 		boolean works = false;
 		try
@@ -927,7 +927,7 @@ public class AuthoringDisplay
 	}
 	
 	//Used to check if the input of the sound method is correct
-	private boolean checkSound (String argument)
+	protected boolean checkSound (String argument)
 	{
 		boolean works = false;
 		try
@@ -949,7 +949,7 @@ public class AuthoringDisplay
 	
 	
 	//Method to highlight the text on the JTextArea
-	private  void highlight ()
+	protected  void highlight ()
 	{
 		//Gets the line to highlight in the JTextArea
 		try 
@@ -974,7 +974,7 @@ public class AuthoringDisplay
 	}
 	
 	//Method to add a child node to the current node
-	private  void addChild (String identifier)
+	protected  void addChild (String identifier)
 	{
 		boolean createNew = true;
 		boolean moreThanOne = false;
@@ -1024,7 +1024,7 @@ public class AuthoringDisplay
 	
 	
 	//Used to add methods (i.e user-input, reset-buttons) that require no input
-	private void addNoInput (String identifier, String title)
+	protected void addNoInput (String identifier, String title)
 	{
 		//Create a new JFrame for the user to accept the change or not
 		JFrame frame = new JFrame(title);
