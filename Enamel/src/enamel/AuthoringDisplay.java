@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Paths;
 
 public class AuthoringDisplay 
 {
@@ -465,6 +466,7 @@ public class AuthoringDisplay
 		highlighter = field.getHighlighter();
 		cellNum = 1;
 		buttonNum = 1;
+		scenarioFilePath = Paths.get("").toAbsolutePath().toString() + File.separator +"SampleScenarios";
 		root.addInfo("Cell " + 1);
 		root.addInfo("Button " + 1);
 		nodes.add(root);
