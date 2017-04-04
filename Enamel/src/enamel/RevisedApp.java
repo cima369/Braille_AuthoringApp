@@ -27,8 +27,8 @@ import java.awt.event.ActionEvent;
 
 public class RevisedApp {
 
-	private JFrame frmAuthoringApp;
-	private AuthoringDisplay disp;
+	protected JFrame frmAuthoringApp;
+	protected AuthoringDisplay disp;
 	public JFileChooser fileSelect;
 	public JLabel status;
 	public File currentFile;
