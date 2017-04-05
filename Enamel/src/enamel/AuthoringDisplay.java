@@ -39,7 +39,6 @@ public class AuthoringDisplay
     
 	public AuthoringDisplay(JFrame fr) 
 	{
-		// TODO Auto-generated constructor stub
 		field = new JTextArea (14, 32);
 		frame = fr;
 		SpringLayout layout = new SpringLayout ();
@@ -74,8 +73,6 @@ public class AuthoringDisplay
 		JButton addSound = new JButton ("Add 'Sound file'");
 		JButton dispChar = new JButton ("Add 'Display char'");
 		JButton answerButton = new JButton ("Add 'Create answer'");
-	//	JButton skipper = new JButton ("Add 'Skip to'");
-	//	JButton userInp = new JButton ("Add 'Get user-input'"); 
 		JButton repeatTextButton = new JButton ("Add 'Repeat'");
 		JButton resetButton = new JButton ("Add 'Reset buttons'");
 		JButton dispClearAll = new JButton ("Add 'Clear all display'");
@@ -127,24 +124,6 @@ public class AuthoringDisplay
 			}				
 		});
 
-/*		skipper.addActionListener(new ActionListener () {
-
-			@Override
-			public void actionPerformed (ActionEvent arg0)
-			{
-				add ("/~skip:", "Add 'Skip to'");
-			}				
-		}); */
-
-		//This button allows the user to wait for user-input
-/*		userInp.addActionListener(new ActionListener () {
-
-			@Override
-			public void actionPerformed (ActionEvent arg0)
-			{
-				addNoInput ("/~user-input", "Add 'Get user-input'");
-			}				
-		}); */
 
 		//This button allows the user to add repeated text
 		repeatTextButton.addActionListener(new ActionListener () {
@@ -1198,6 +1177,7 @@ public class AuthoringDisplay
 					nodes.get(update).getInfo().add(highlightLocation, identifier + area.getText());
 
 				}
+				//Adds normal text to be repeated
 				else if (((String)(cb.getSelectedItem())).equals(choices[0]))
 				{
 					if (title.equals("Add 'Repeat'"))
