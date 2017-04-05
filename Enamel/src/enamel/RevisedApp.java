@@ -35,6 +35,8 @@ public class RevisedApp {
 	public JTextArea textAreaBig;
 	StringBuilder sb = new StringBuilder();
 	StringBuilder sb2 = new StringBuilder();
+	public AboutFrame aboutFrame;
+	public HelpFrame helpFrame;
 
 	/**
 	 * Launch the application.
@@ -192,6 +194,37 @@ public class RevisedApp {
 
 		JMenuItem mntmMap = new JMenuItem("Map");
 		mnView.add(mntmMap);
+		
+		JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				aboutFrame = new AboutFrame();
+                
+                aboutFrame.setSize(600, 400);
+                aboutFrame.setVisible(true);
+                aboutFrame.setResizable(false);
+                aboutFrame.setLocationRelativeTo(null);
+        }
+			
+		});
+		mnHelp.add(mntmAbout);
+		
+		JMenuItem mntmHelp = new JMenuItem("Help Contents");
+		mntmHelp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				helpFrame = new HelpFrame();
+                helpFrame.setSize(600, 620);
+                helpFrame.setVisible(true);
+                helpFrame.setResizable(false);
+                helpFrame.setLocationRelativeTo(null);
+			}
+		});
+		mnHelp.add(mntmHelp);
 		
 		
 	}
