@@ -145,10 +145,10 @@ public class RevisedApp {
 				if (currentFile == null) {
 					int saveResult = fileSelect.showSaveDialog(null);
 					if (saveResult == JFileChooser.APPROVE_OPTION) {
-						saveFile(fileSelect.getSelectedFile(), textAreaBig.getText());
+						saveFile(fileSelect.getSelectedFile());
 					}
 				} else {
-					saveFile(currentFile, textAreaBig.getText());
+					saveFile(currentFile);
 				}
 				status.setText("File Saved...");
 			}
@@ -159,7 +159,7 @@ public class RevisedApp {
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int saveResult = fileSelect.showSaveDialog(null);
-				saveFile(fileSelect.getSelectedFile(), textAreaBig.getText());
+				saveFile(fileSelect.getSelectedFile());
 				status.setText("File Saved...");
 			}
 
@@ -234,23 +234,20 @@ public class RevisedApp {
 	}
 
 	//this method is used to implement save and Save As feature
-	public void saveFile(File file, String contents) {
-		BufferedWriter writer = null;
-		String filePath = file.getPath();
-		if (!filePath.endsWith(".txt")) {
+	public void saveFile(File file) 
+	{
+		String filePath = file.getAbsolutePath();
+		if (!filePath.endsWith(".txt")) 
+		{
 			filePath += ".txt";
 		}
 
-		try {
-			writer = new BufferedWriter(new FileWriter(filePath));
-			writer.write(contents);
-			writer.close();
-			textAreaBig.setText(contents);
-
-			// sets the frame title to that of the file path
-			frmAuthoringApp.setTitle("Authoring App" + filePath);
-			currentFile = file;
-		} catch (Exception e) {
+		try 
+		{
+			disp.save(filePath);
+		} 
+		catch (Exception e) 
+		{
 
 		}
 	}
