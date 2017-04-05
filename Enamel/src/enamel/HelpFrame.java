@@ -12,7 +12,6 @@ import javax.swing.JTextArea;
 	     	       
 	        public HelpFrame(){
 	                setTitle("Help-Team 3's Authoring App");
-	               
 	                helpTextArea = new JTextArea("This section provides information about each feature that deals with editing the Senario file.\n\n"
 	                		+ "1) Add 'Normal text': Add text using this option.\n\n"
 	                		+ "2) Add 'Sound file': Load a sound file(.wav) by selecting this option.\n\n"
