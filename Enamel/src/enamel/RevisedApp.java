@@ -30,6 +30,7 @@ public class RevisedApp {
 	StringBuilder sb2 = new StringBuilder();
 	public AboutFrame aboutFrame;
 	public HelpFrame helpFrame;
+	protected AudioRecording ar;
 
 	/**
 	 * Launch the application.
@@ -151,6 +152,7 @@ public class RevisedApp {
 		JSeparator separator_1 = new JSeparator();
 		mnFile.add(separator_1);
 
+		//Menu item to exit the program
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -170,16 +172,39 @@ public class RevisedApp {
 		JMenuItem mntmRecording = new JMenuItem("Recording");
 		mnVoice.add(mntmRecording);
 
+		mntmRecording.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ar = new AudioRecording ();
+			}
+		});
 		//Components under view
 		JMenu mnView = new JMenu("View");
 		menuBar.add(mnView);
 
+		
 		//Map menu item to pull up the map of the scenario file broken into nodes
 		JMenuItem mntmMap = new JMenuItem("Map");
 		mnView.add(mntmMap);
 		mntmMap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				disp.drawMap();
+			}
+		});
+		
+		//Adding play menu item so user can play scenario file
+		JMenu playItem = new JMenu ("Play");
+		menuBar.add(playItem);
+		
+		//Attempted to play a scenario file, but met with a weird error where the simulator window was blank
+		JMenuItem playSceneItem = new JMenuItem ("Play now");
+		playItem.add(playSceneItem);
+		playSceneItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				File f = new File ("SampleScenarios" + File.separator + "temp.txt");
+				disp.save(f.toString());
+				/*
+				SoundPlayer play = new SoundPlayer ();
+				play.setScenarioFile(f.toString()); */
 			}
 		});
 
