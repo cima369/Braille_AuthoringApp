@@ -399,7 +399,6 @@ public class AuthoringDisplay
 		{
 			File f = fileName;
 			Scanner fileScanner = new Scanner (f);
-			SpringLayout layout = new SpringLayout ();
 			String absolutePath = f.getAbsolutePath();
 			scenarioFilePath = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator));
 
@@ -1237,8 +1236,4 @@ public class AuthoringDisplay
 
 	}
 
-	public static void main (String [] args)
-	{
-		AuthoringDisplay fr = new AuthoringDisplay (new JFrame (" Jello"));
-	}
 }
