@@ -17,24 +17,25 @@ import java.nio.file.Paths;
 
 public class AuthoringDisplay 
 {
-	
-	// Used to store the different sections
-	protected  ArrayList <String> identifiers; 
-	protected  ArrayList <SectionNode> nodes;
-	protected  JTextArea field = new JTextArea (14, 32);
-	protected  JFrame frame = new JFrame ();
-	protected  SectionNode currNode;
-	protected  SectionNode root;
-	protected  ArrayDeque <SectionNode> q = new ArrayDeque <SectionNode> ();
-	protected  int numLines = 0;
-	protected  int highlightLocation = 0;
-	protected  Highlighter highlighter;
-	protected  String scenarioFilePath;
-	protected  int cellNum;
-	protected  int buttonNum;
-	protected  int update = 0;
 
-	
+	// Used to store the different sections
+	protected ArrayList <String> identifiers; 
+	protected ArrayList <SectionNode> nodes;
+	protected JTextArea field = new JTextArea (14, 32);
+	protected JFrame frame = new JFrame ();
+	protected SectionNode currNode;
+	protected SectionNode root;
+	protected ArrayDeque <SectionNode> q = new ArrayDeque <SectionNode> ();
+	protected int numLines = 0;
+	protected int highlightLocation = 0;
+	protected Highlighter highlighter;
+	protected String scenarioFilePath;
+	protected int cellNum;
+	protected int buttonNum;
+	protected int update = 0;
+	protected boolean question;
+    protected int numChange = 0;
+
 	public AuthoringDisplay(JFrame fr) 
 	{
 		// TODO Auto-generated constructor stub
@@ -42,417 +43,334 @@ public class AuthoringDisplay
 		frame = fr;
 		SpringLayout layout = new SpringLayout ();
 		nodes = new ArrayList <SectionNode> ();
-		
+		question = false;
 		//When initialized, creates a blank scenario file
 		newFile ();
-	/*	q = new ArrayDeque <SectionNode> ();
-		numLines = 0;
+
+
+		field.setText(root.display());
+
+		//Creates a scrollable JPanel to read in the information of the node
+		JScrollPane scroll = new JScrollPane (field);
+		JPanel textPane = new JPanel ();
+		String[] additional = {"Add 'Set voice'", "Add 'Repeat button'", "Add 'Display cell pins'", 
+				"Add 'Raise one pin'", "Add 'Lower one pin'", "Add 'Clear one cell'"};
 		highlightLocation = 0;
-		update = 0;
 		highlighter = field.getHighlighter();
-		highlight (); */
-		/*
-		try
-		{
-			//Reads the scenario file
-			File f = new File ("SampleScenarios/Scenario_Temp.txt");
-			Scanner fileScanner = new Scanner (f);
-			String absolutePath = f.getAbsolutePath();
-			scenarioFilePath = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator));
+		highlight ();
 
-			cellNum = Integer.parseInt(fileScanner.nextLine().split("\\s")[1]);
-			buttonNum = Integer.parseInt(fileScanner.nextLine().split("\\s")[1]);
-			identifiers = new ArrayList <String> ();
-			nodes = new ArrayList <SectionNode> ();
-			
-			//Creates the root node
-			String identifier = "RootNode";
-			root = new SectionNode (identifier);
-			identifiers.add(identifier);
-			nodes.add(root);
-		    currNode = nodes.get(identifiers.lastIndexOf(identifier));
-		    
-		    root.addInfo("Cell " + cellNum);
-		    root.addInfo("Button " + buttonNum);
-		    String lines, oldidentifier, rootidentifier = identifier;
-		    
-		    //Goes through the whole scenario file, and create a tree that has nodes based on the scenario file
-			while (fileScanner.hasNextLine ())
+		field.setFont(new Font ("Serif", Font.PLAIN, 16));
+		field.setLineWrap (true);
+		field.setWrapStyleWord (true);
+		field.setEditable(false);
+		textPane.add(scroll);
+
+
+		frame.setSize (603, 560);
+
+		//Adds all the buttons that the user can press to add lines
+		JButton addLines = new JButton ("Add 'Normal text'");
+		JButton addSound = new JButton ("Add 'Sound file'");
+		JButton dispChar = new JButton ("Add 'Display char'");
+		JButton answerButton = new JButton ("Add 'Create answer'");
+	//	JButton skipper = new JButton ("Add 'Skip to'");
+	//	JButton userInp = new JButton ("Add 'Get user-input'"); 
+		JButton repeatTextButton = new JButton ("Add 'Repeat'");
+		JButton resetButton = new JButton ("Add 'Reset buttons'");
+		JButton dispClearAll = new JButton ("Add 'Clear all display'");
+		JButton editButton = new JButton ("Edit");
+		JButton deleteButton = new JButton ("Delete");
+		JButton upButton = new JButton ("Up");
+		JButton downButton = new JButton ("Down");
+
+		//Additional options for the uses to add
+		JLabel options = new JLabel ("More options to add: ");
+		JComboBox<String> cb = new JComboBox<String>(additional);
+		JButton addOptions = new JButton ("Add");
+
+		//Sets the actions of all the buttons to perform the corresponding action
+		//This button allows the user to enter normal text to the scenario file
+		addLines.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
 			{
-				oldidentifier = identifier;
-				lines = fileScanner.nextLine();
-				if (lines.trim().length () > 0)
+				add ("", addLines.getText());
+			}				
+		});
+		//This button allows the user to add a sound file to the scenario file
+		addSound.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				add ("/~sound:", "Add 'Sound file'");
+			}				
+		});
+		//This button allows the user to add a display-character in the scenario file
+		dispChar.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				add ("/~disp-cell-char:", "Add 'Display char'");
+			}				
+		});
+
+		answerButton.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				add ("/~skip-button:", "Add 'Skip-button'");
+			}				
+		});
+
+/*		skipper.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				add ("/~skip:", "Add 'Skip to'");
+			}				
+		}); */
+
+		//This button allows the user to wait for user-input
+/*		userInp.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				addNoInput ("/~user-input", "Add 'Get user-input'");
+			}				
+		}); */
+
+		//This button allows the user to add repeated text
+		repeatTextButton.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				add ("/~repeat", "Add 'Repeat'");
+			}				
+		});
+
+		//This button allows the user to reset the functionality of the buttons of the simulator
+		resetButton.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				addNoInput ("/~reset-buttons", "Add 'Reset buttons'");
+			}				
+		});
+
+		//This button clears the display of all of the simulator braille cells
+		dispClearAll.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				addNoInput ("/~disp-clearAll", "Add 'Clear all display'");
+			}				
+		});
+
+		//Add options is for the JComboBox object which has the additional options that
+		//the user can use to add more features to the scenario file.
+		addOptions.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				//This option allows the user to change the voice of the 
+				if (cb.getSelectedItem ().equals (additional [0]))
 				{
-					//Creates a new node based on a new identifier
-					for (String i : identifiers)
-					{
-						if (lines.equals("/~" + i))
-						{
-							identifier = i;
-							currNode = nodes.get(identifiers.lastIndexOf(identifier));
-							break;
-						}
-					}
-
-					//Creates a new node if the line skip-button was found
-					if (lines.length() >= 14 && lines.substring(0, 14).equals("/~skip-button:"))
-					{
-						identifier = lines.substring (16);
-						identifiers.add(identifier);
-						nodes.add (new SectionNode (identifier));
-
-						currNode.addChild(nodes.get(identifiers.lastIndexOf(identifier)));
-					}
-					//Adds the line being read in, to the current node
-					currNode.addInfo (lines);
-					//Ends the node and moves on to the next node
-					if (lines.equals("/~user-input"))
-					{
-						nodes.remove(identifiers.lastIndexOf(rootidentifier));
-						identifiers.remove(rootidentifier);		
-					}
-					else
-					{
-						//Creates a new node if the command skip was found
-						if (lines.length () >= 7 && lines.substring(0, 7).equals("/~skip:"))
-						{
-							oldidentifier = identifier;
-							identifier = lines.substring(7);
-							rootidentifier = identifier;
-							//Checks to see if the node has not been created already, and if it has not
-							//then to create it
-							if (!identifiers.contains(identifier))
-							{
-								identifiers.add(identifier);
-								nodes.add (new SectionNode (identifier));
-							}
-							
-							//Adds the child the to the current node, then advances the currNode to the 
-							//next one
-							currNode.addChild(nodes.get(identifiers.lastIndexOf(identifier)));
-							
-							nodes.remove(identifiers.lastIndexOf(oldidentifier));
-							identifiers.remove(oldidentifier);
-
-						}
-					}
+					add ("/~set-voice:", additional [0]);
 				}
+				//This option allows the user to set a button of the simulator to repeat the text
+				else if (cb.getSelectedItem().equals (additional [1]))
+				{
+					add ("/~repeat-button:", additional [1]);
+				}
+				//This option allows the user to display cell pins based on a string
+				else if (cb.getSelectedItem().equals(additional [2]))
+				{
+					add ("/disp-cell-pins:", additional [2]);
+				}
+				//This option allows the user to raise a cell pin
+				else if (cb.getSelectedItem().equals(additional [3]))
+				{
+					add ("/disp-cell-raise:", additional [3]);
+				}
+				//This option allows the user to lower a cell pin
+				else if (cb.getSelectedItem().equals(additional [4]))
+				{
+					add ("/disp-cell-lower:", additional [4]);
+				}
+				//This option allows the user to clear the display of a braille cell
+				else if (cb.getSelectedItem().equals(additional [5]))
+				{
+					add ("/disp-cell-clear:", additional [5]);
+				}
+
+			}				
+		}); 
+		//This button shifts the highligther up 
+		downButton.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+
+				if (highlightLocation < numLines - 2)
+				{
+					highlightLocation ++;
+				}
+				highlight ();
 			}
-		
-			fileScanner.close (); */
-				
-			field.setText(root.display());
-			
-			//Creates a scrollable JPanel to read in the information of the node
-			JScrollPane scroll = new JScrollPane (field);
-			JPanel textPane = new JPanel ();
-			String[] additional = {"Add 'Set voice'", "Add 'Repeat button'", "Add 'Display cell pins'", 
-					"Add 'Raise one pin'", "Add 'Lower one pin'", "Add 'Clear one cell'"};
-			highlightLocation = 0;
-			highlighter = field.getHighlighter();
-			highlight ();
-			
-			field.setFont(new Font ("Serif", Font.PLAIN, 16));
-			field.setLineWrap (true);
-	
-			field.setWrapStyleWord (true);
-			field.setEditable(false);
-			textPane.add(scroll);
-				
-			
-								
-			
-			frame.setSize (603, 560);
-	
-			//Adds all the buttons that the user can press to add lines
-			JButton addLines = new JButton ("Add 'Normal text'");
-			JButton addSound = new JButton ("Add 'Sound file'");
-			JButton dispChar = new JButton ("Add 'Display char'");
-			JButton skipButton = new JButton ("Add 'Skip-button'");
-			JButton skipper = new JButton ("Add 'Skip to'");
-			JButton userInp = new JButton ("Add 'Get user-input'"); 
-			JButton repeatTextButton = new JButton ("Add 'Repeat'");
-			JButton resetButton = new JButton ("Add 'Reset buttons'");
-			JButton dispClearAll = new JButton ("Add 'Clear all display'");
-			JButton editButton = new JButton ("Edit");
-			JButton deleteButton = new JButton ("Delete");
-			JButton upButton = new JButton ("Up");
-			JButton downButton = new JButton ("Down");
+		});
+		//This button shifts the highlight down
+		upButton.addActionListener(new ActionListener () {
 
-			//Additional options for the uses to add
-			JLabel options = new JLabel ("More options to add: ");
-		    JComboBox<String> cb = new JComboBox<String>(additional);
-		    JButton addOptions = new JButton ("Add");
-			
-		    //Sets the actions of all the buttons to perform the corresponding action
-			addLines.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				if (highlightLocation > 0)
 				{
-					add ("", addLines.getText());
-				}				
-			});
-			
-			addSound.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					add ("/~sound:", "Add 'Sound file'");
-				}				
-			});
-			
-			dispChar.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					add ("/~disp-cell-char:", "Add 'Display char'");
-				}				
-			});
-			
-			skipButton.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					add ("/~skip-button:", "Add 'Skip-button'");
-				}				
-			});
-			
-			skipper.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					add ("/~skip:", "Add 'Skip to'");
-				}				
-			});
-			
-			userInp.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					addNoInput ("/~user-input", "Add 'Get user-input'");
-				}				
-			});
-			
-			repeatTextButton.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					add ("/~repeat", "Add 'Repeat'");
-				}				
-			});
-			
-			resetButton.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					addNoInput ("/~reset-buttons", "Add 'Reset buttons'");
-				}				
-			});
-			
-			dispClearAll.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					addNoInput ("/~disp-clearAll", "Add 'Clear all display'");
-				}				
-			});
-			
-			addOptions.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					if (cb.getSelectedItem ().equals (additional [0]))
-					{
-						add ("/~set-voice:", additional [0]);
-					}
-					else if (cb.getSelectedItem().equals (additional [1]))
-					{
-						add ("/~repeat-button:", additional [1]);
-					}
-					else if (cb.getSelectedItem().equals(additional [2]))
-					{
-						add ("/disp-cell-pins:", additional [2]);
-					}
-					else if (cb.getSelectedItem().equals(additional [3]))
-					{
-						add ("/disp-cell-raise:", additional [3]);
-					}
-					else if (cb.getSelectedItem().equals(additional [4]))
-					{
-						add ("/disp-cell-lower:", additional [4]);
-					}
-					else if (cb.getSelectedItem().equals(additional [5]))
-					{
-						add ("/disp-cell-clear:", additional [5]);
-					}
+					highlightLocation --;
+				}	
+				highlight ();
+			}				
+		});
+		//This button deletes a line in the scenario file
+		deleteButton.addActionListener(new ActionListener () {
 
-				}				
-			}); 
-			downButton.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+				remove ();
+			}				
+		});
+		//This button allows the edit of the cell and button options
+		editButton.addActionListener(new ActionListener () {
+
+			@Override
+			public void actionPerformed (ActionEvent arg0)
+			{
+
+				try
 				{
-					
-					if (highlightLocation < numLines - 2)
+					int start = field.getLineStartOffset(highlightLocation);
+					int end = field.getLineEndOffset(highlightLocation);
+					if (end - start >= 6)
 					{
-						highlightLocation ++;
-					}
-					highlight ();
-				}
-			});
-			
-			upButton.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					if (highlightLocation > 0)
-					{
-						highlightLocation --;
-					}	
-					highlight ();
-				}				
-			});
-			deleteButton.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					remove ();
-				}				
-			});
-			editButton.addActionListener(new ActionListener () {
-				
-				@Override
-				public void actionPerformed (ActionEvent arg0)
-				{
-					
-					try
-					{
-						int start = field.getLineStartOffset(highlightLocation);
-						int end = field.getLineEndOffset(highlightLocation);
-						if (end - start >= 6)
+						if (nodes.get(update).getInfo().get(highlightLocation).substring(0, 4).equals("Cell"))
 						{
-							if (nodes.get(update).getInfo().get(highlightLocation).substring(0, 4).equals("Cell"))
-							{
-								add ("Cell ", "Cell");
-							}
-							else if (nodes.get(update).getInfo().get(highlightLocation).substring(0, 6).equals("Button"))
-							{
-								add ("Button ", "Button");
+							add ("Cell ", "Cell");
+						}
+						else if (nodes.get(update).getInfo().get(highlightLocation).substring(0, 6).equals("Button"))
+						{
+							add ("Button ", "Button");
 
-							}
 						}
 					}
-					catch (BadLocationException e)
-					{
-						
-					}
-					
-					
-				}				
-			});
-			frame.getContentPane().setLayout(layout);
-			frame.getContentPane().add (textPane);
-			frame.getContentPane().add (addLines);
-			frame.getContentPane().add (addSound);
-			frame.getContentPane().add (dispChar);
-			frame.getContentPane().add (skipButton);
-			frame.getContentPane().add (skipper);
-			frame.getContentPane().add (userInp);
-			frame.getContentPane().add (repeatTextButton);
-			frame.getContentPane().add (resetButton);
-			frame.getContentPane().add (dispClearAll);
-			frame.getContentPane().add (options);
-			frame.getContentPane().add (cb);
-			frame.getContentPane().add (addOptions);
-			frame.getContentPane().add (editButton);
-			frame.getContentPane().add (deleteButton);
-			frame.getContentPane().add (upButton);
-			frame.getContentPane().add (downButton);
-			
-			//Defines the layout of the buttons
-			layout.putConstraint(SpringLayout.WEST, textPane, 221, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, textPane, 191, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, addLines, 40, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, addLines, 25, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, addSound, 220, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, addSound, 25, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, dispChar, 400, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, dispChar, 25, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, skipButton, 40, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, skipButton, 90, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, skipper, 220, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, skipper, 90, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, userInp, 400, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, userInp, 90, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, repeatTextButton, 40, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, repeatTextButton, 145, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, resetButton, 220, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, resetButton, 145, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, dispClearAll, 400, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, dispClearAll, 145, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, options, 5, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, options, 220, SpringLayout.NORTH, frame.getContentPane());	
-			layout.putConstraint(SpringLayout.WEST, cb, 5, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, cb, 240, SpringLayout.NORTH, frame.getContentPane());	
-			layout.putConstraint(SpringLayout.WEST, addOptions, 160, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, addOptions, 240, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, editButton, 60, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, editButton, 300, SpringLayout.NORTH, frame.getContentPane());	
-			layout.putConstraint(SpringLayout.WEST, deleteButton, 60, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.NORTH, deleteButton, 360, SpringLayout.NORTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, upButton, 20, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.SOUTH, upButton, -60, SpringLayout.SOUTH, frame.getContentPane());
-			layout.putConstraint(SpringLayout.WEST, downButton, 140, SpringLayout.WEST, frame.getContentPane());
-			layout.putConstraint(SpringLayout.SOUTH, downButton, -60, SpringLayout.SOUTH, frame.getContentPane());	
-		
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setVisible(true);
-			drawMap ();
-		}
-	/*	catch (Exception e)
-		{
-			
-		}*/
-	
+				}
+				catch (BadLocationException e)
+				{
+
+				}
+
+
+			}				
+		});
+
+		//Adding the layout and necessary buttons to the frame
+		frame.getContentPane().setLayout(layout);
+		frame.getContentPane().add (textPane);
+		frame.getContentPane().add (addLines);
+		frame.getContentPane().add (addSound);
+		frame.getContentPane().add (dispChar);
+		frame.getContentPane().add (answerButton);
+//		frame.getContentPane().add (skipper);
+//		frame.getContentPane().add (userInp);
+		frame.getContentPane().add (repeatTextButton);
+		frame.getContentPane().add (resetButton);
+		frame.getContentPane().add (dispClearAll);
+		frame.getContentPane().add (options);
+		frame.getContentPane().add (cb);
+		frame.getContentPane().add (addOptions);
+		frame.getContentPane().add (editButton);
+		frame.getContentPane().add (deleteButton);
+		frame.getContentPane().add (upButton);
+		frame.getContentPane().add (downButton);
+
+		//Defines the layout of the buttons
+		layout.putConstraint(SpringLayout.WEST, textPane, 221, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, textPane, 191, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, addLines, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, addLines, 25, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, addSound, 220, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, addSound, 25, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, dispChar, 400, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, dispChar, 25, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, answerButton, 220, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, answerButton, 90, SpringLayout.NORTH, frame.getContentPane());
+//		layout.putConstraint(SpringLayout.WEST, skipper, 220, SpringLayout.WEST, frame.getContentPane());
+//		layout.putConstraint(SpringLayout.NORTH, skipper, 90, SpringLayout.NORTH, frame.getContentPane());
+//		layout.putConstraint(SpringLayout.WEST, userInp, 400, SpringLayout.WEST, frame.getContentPane());
+//		layout.putConstraint(SpringLayout.NORTH, userInp, 90, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, repeatTextButton, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, repeatTextButton, 145, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, resetButton, 220, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, resetButton, 145, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, dispClearAll, 400, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, dispClearAll, 145, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, options, 5, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, options, 220, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.WEST, cb, 5, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, cb, 240, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.WEST, addOptions, 160, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, addOptions, 240, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, editButton, 60, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, editButton, 300, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.WEST, deleteButton, 60, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, deleteButton, 360, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, upButton, 20, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.SOUTH, upButton, -60, SpringLayout.SOUTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, downButton, 140, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.SOUTH, downButton, -60, SpringLayout.SOUTH, frame.getContentPane());	
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+	}
+
+
 	//Used to check if the arguments to change the button and cell numbers are valid
 	protected boolean checkEdit (String argument)
 	{
 		boolean works = false;
 		try
-	    {
+		{
 			works = true;
-	        int args = Integer.parseInt(argument);
+			int args = Integer.parseInt(argument);
 			// Checks to see if the argument is a positive integer
-	        if (args <= 0 )
-	        {
-	        	JOptionPane.showMessageDialog(new JFrame (), "Sorry, that argument is incorrect. Expected argument "
-	        			+ "to be a positive integer.") ;
-		        works = false;
-	        }
-	    }
+			if (args <= 0 )
+			{
+				JOptionPane.showMessageDialog(new JFrame (), "Sorry, that argument is incorrect. Expected argument "
+						+ "to be a positive integer.") ;
+				works = false;
+			}
+		}
 		// Throws an error if you try to put in an argument that is not a number
-	    catch (Exception e)
-	    {
-	    	JOptionPane.showMessageDialog(new JFrame (), "Sorry, that argument is incorrect. Expected argument "
-        			+ "to be a positive integer.") ;
-	    	works = false;
-	    }
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(new JFrame (), "Sorry, that argument is incorrect. Expected argument "
+					+ "to be a positive integer.") ;
+			works = false;
+		}
 		return works;
 	}
-	
+
 	//Creates a new scenario file
 	protected void newFile ()
 	{
@@ -460,6 +378,7 @@ public class AuthoringDisplay
 		String identifier = "RootNode";
 		root = new SectionNode (identifier);
 		q = new ArrayDeque <SectionNode> ();
+		question = false;
 		numLines = 0;
 		highlightLocation = 0;
 		update = 0;
@@ -470,6 +389,7 @@ public class AuthoringDisplay
 		root.addInfo("Cell " + 1);
 		root.addInfo("Button " + 1);
 		nodes.add(root);
+		currNode = root;
 		field.setText(nodes.get(update).display());
 		highlight();
 	}
@@ -482,23 +402,23 @@ public class AuthoringDisplay
 			SpringLayout layout = new SpringLayout ();
 			String absolutePath = f.getAbsolutePath();
 			scenarioFilePath = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator));
-			
+
 			cellNum = Integer.parseInt(fileScanner.nextLine().split("\\s")[1]);
 			buttonNum = Integer.parseInt(fileScanner.nextLine().split("\\s")[1]);
 			identifiers = new ArrayList <String> ();
 			nodes = new ArrayList <SectionNode> ();
-			
+
 			String identifier = "RootNode";
 			root = new SectionNode (identifier);
 			identifiers.add(identifier);
 			nodes.add(root);
-		    currNode = nodes.get(identifiers.lastIndexOf(identifier));
-		    
-		    root.addInfo("Cell " + cellNum);
-		    root.addInfo("Button " + buttonNum);
-		    String lines, oldidentifier, rootidentifier = identifier;
-		    
-		    //Goes through the whole scenario file, and create a tree that has nodes based on the scenario file
+			currNode = nodes.get(identifiers.lastIndexOf(identifier));
+
+			root.addInfo("Cell " + cellNum);
+			root.addInfo("Button " + buttonNum);
+			String lines, oldidentifier, rootidentifier = identifier;
+
+			//Goes through the whole scenario file, and create a tree that has nodes based on the scenario file
 			while (fileScanner.hasNextLine ())
 			{
 				oldidentifier = identifier;
@@ -515,14 +435,14 @@ public class AuthoringDisplay
 							break;
 						}
 					}
-	
+
 					//Creates a new node if the line skip-button was found
 					if (lines.length() >= 14 && lines.substring(0, 14).equals("/~skip-button:"))
 					{
 						identifier = lines.substring (16);
 						identifiers.add(identifier);
 						nodes.add (new SectionNode (identifier));
-	
+
 						currNode.addChild(nodes.get(identifiers.lastIndexOf(identifier)));
 					}
 					//Adds the line being read in, to the current node
@@ -548,30 +468,34 @@ public class AuthoringDisplay
 								identifiers.add(identifier);
 								nodes.add (new SectionNode (identifier));
 							}
-							
+
 							//Adds the child the to the current node, then advances the currNode to the 
 							//next one
 							currNode.addChild(nodes.get(identifiers.lastIndexOf(identifier)));
-							
+
 							nodes.remove(identifiers.lastIndexOf(oldidentifier));
 							identifiers.remove(oldidentifier);
-	
+
 						}
 					}
 				}
 			}
+			//nodes.remove(0);
+			nodes.clear();
 			fileScanner.close ();
-			
-			field.setText(root.display());
+
+			currNode = root;
+			nodes.add(root);
+			field.setText(currNode.display());
 			highlightLocation = 0;
-				
+
 			highlighter = field.getHighlighter();
 			highlight ();
-			
+
 		}
 		catch (Exception e)
 		{
-			
+
 		}
 	}
 	//Save function
@@ -580,10 +504,10 @@ public class AuthoringDisplay
 		try
 		{
 			// Writes to the saved file
-		    PrintWriter writer = new PrintWriter("SampleScenarios/Scenario_Temp.txt");
+			PrintWriter writer = new PrintWriter("SampleScenarios/Scenario_Temp.txt");
 			q.add(root);
 			SectionNode n;
-			
+
 			//Breadth first searching to save a well file formatted tree
 			while (!q.isEmpty())
 			{
@@ -601,14 +525,14 @@ public class AuthoringDisplay
 					}
 				}
 			}
-		    writer.close();
+			writer.close();
 		} 
 		catch (IOException e) 
 		{
-		   // do something
+			// do something
 		}
 	}
-	
+
 	// Used to update the JTextArea view to the correct node
 	protected void updater (String toUpdate)
 	{
@@ -618,7 +542,7 @@ public class AuthoringDisplay
 		}
 		catch (Exception e)
 		{
-			
+
 		}
 	}
 
@@ -643,29 +567,29 @@ public class AuthoringDisplay
 			highlight ();
 		}
 	}
-	
+
 	//Reset the highlight location to the first line
 	protected void highlightReset ()
 	{
 		highlightLocation = 0;
 		numLines = field.getLineCount();
 	}
-	
+
 	//Creates a map to traverse through the different nodes
 	protected void drawMap ()
 	{
-	
+
 		JFrame frame = new JFrame("Map");
-        JPanel panel = new JPanel();
-        nodes.clear ();
-        int incrementer = 0;
-        boolean first = true;
-        BoxLayout boxY = new BoxLayout (panel, BoxLayout.Y_AXIS);
-    	ArrayList <JButton> mapButtons = new ArrayList <JButton> ();
-    	panel.setLayout(boxY);
-        q.add(root);
+		JPanel panel = new JPanel();
+		nodes.clear ();
+		int incrementer = 0;
+		boolean first = true;
+		BoxLayout boxY = new BoxLayout (panel, BoxLayout.Y_AXIS);
+		ArrayList <JButton> mapButtons = new ArrayList <JButton> ();
+		panel.setLayout(boxY);
+		q.add(root);
 		SectionNode n;
-		mapButtons.add(new JButton ("Identity: " + root.getIdentity()));
+		mapButtons.add(new JButton ("Identity: " + root.getIdentity() + " " + question));
 		panel.add(mapButtons.get(incrementer));
 		incrementer ++;
 		while (!q.isEmpty())
@@ -673,27 +597,28 @@ public class AuthoringDisplay
 			first = true;
 			n = q.pop ();
 			nodes.add(n);
+
 			for (int a = 0; a < n.getNumChildren (); a ++)
 			{
 				if (!q.contains(n.getChild(a)))
 				{
-					
+
 					if (first)
 					{
 						panel.add(Box.createRigidArea (new Dimension (0, 35)));
 						first = false;
-
+							question = !question;
+						
 
 					}
-	
-					mapButtons.add(new JButton ("Identity: " + n.getChild(a).getIdentity()));
+					
+					mapButtons.add(new JButton ("Identity: " + n.getChild(a).getIdentity() + "  " + question));
 					panel.add(mapButtons.get(incrementer));
 					incrementer++;
 					q.add(n.getChild(a));
 
 				}
 			}
-
 		}  
 		//Display the name of the JButtons on the map
 		for (int i = 0; i < nodes.size(); i ++)
@@ -702,7 +627,7 @@ public class AuthoringDisplay
 			String updateNum = i +"";
 			//By clicking on the map buttons, it displays the information of the node on the text area
 			mapButtons.get(i).addActionListener(new ActionListener () {
-				
+
 				@Override
 				public void actionPerformed (ActionEvent arg0)
 				{
@@ -714,47 +639,47 @@ public class AuthoringDisplay
 				}
 			});
 		} 
-		
-		//Creates a scroll bar if the map is too big for the current size of the JFrame
-        JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        frame.getContentPane().add(scrollPane);
-        frame.setSize (600, 350);
-        frame.setLocation (100, 150);
 
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-        
-       
+		//Creates a scroll bar if the map is too big for the current size of the JFrame
+		JScrollPane scrollPane = new JScrollPane(panel);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		frame.getContentPane().add(scrollPane);
+		frame.setSize (600, 350);
+		frame.setLocation (100, 150);
+
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setVisible(true);
+
+
 	}
-	
+
 	//Used to check if the input for the method of the display cell clear is correct
 	protected boolean checkDispCellClear (String argument)
 	{
 		boolean works = false;
 		try
-	    {
+		{
 			works = true;
-	        int args = Integer.parseInt(argument);
+			int args = Integer.parseInt(argument);
 			// Checks to see if the argument is a valid cell number
-	        if (args < 0 || args > cellNum - 1)
-	        {
-	        	JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
+			if (args < 0 || args > cellNum - 1)
+			{
+				JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
 						+ "the range of 0 .. " + (cellNum - 1));
-		        works = false;
-	        }
-	    }
+				works = false;
+			}
+		}
 		// Throws an error if you try to put in an argument that is not a number
-	    catch (Exception e)
-	    {
-	    	JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
 					+ "the range of 0 .. " + (cellNum - 1));
-	    	works = false;
-	    }
+			works = false;
+		}
 		return works;
 	}
-	
+
 	//Used to check if the input for the method of raise lower is correct
 	protected boolean checkRaiseLower (String argument)
 	{
@@ -778,11 +703,11 @@ public class AuthoringDisplay
 		{
 			JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
 					+ "the range of 0 .. " + (cellNum - 1) + "\n Or the pin number to be the range of 1 .. 8");
-	        works = false;
+			works = false;
 		}
 		return works;
 	}
-	
+
 	//Used to check if the input for the method display cell pins is correct
 	protected boolean checkDispCellPins (String argument)
 	{
@@ -815,11 +740,11 @@ public class AuthoringDisplay
 		{
 			JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
 					+ "the range of 0 .. " + (cellNum - 1) + "\n Or the string to have 8 characters of 1s and 0s.");
-	        works = false;
+			works = false;
 		}
 		return works;
 	}
-	
+
 	//Used to check if the input for the method repeat-button is correct
 	protected boolean checkRepeatButton (String argument)
 	{
@@ -841,25 +766,24 @@ public class AuthoringDisplay
 		{
 			JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected button number to be"
 					+ "the range of 0 .. " + (buttonNum - 1) + "\n Or the argument to have two values.");
-	        works = false;
+			works = false;
 		}
 		return works;	
 	}
-	
+
 	//Used to check if the input for the method skip-button is correct
-	protected boolean checkSkipButton (String argument)
+	protected boolean checkAnswerButton (String argument)
 	{
 		boolean works = false;
 		try
 		{
 			works = true;
-			String [] args = argument.split("\\s");
-			int argsIndex = Integer.parseInt(args[0]);
+			int argsIndex = Integer.parseInt(argument);
 			//Checks if the first argument is a valid button number
-			if (argsIndex > buttonNum - 1 || argsIndex < 0 || args.length > 2)
+			if (argsIndex > buttonNum - 1 || argsIndex < 0)
 			{
 				JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected button number to be"
-						+ "the range of 0 .. " + (buttonNum - 1) + "\n Or the argument to have two values.");
+						+ "the range of 0 .. " + (buttonNum - 1) + ".");
 				works = false;
 			}
 		}
@@ -868,11 +792,11 @@ public class AuthoringDisplay
 		{
 			JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected button number to be"
 					+ "the range of 0 .. " + (buttonNum - 1) + "\n Or the argument to have two values.");
-	        works = false;
+			works = false;
 		}
 		return works;
 	}
-	
+
 	//Used to check if the input of the display-char method is correct
 	protected  boolean checkDispChar (String argument)
 	{
@@ -888,7 +812,7 @@ public class AuthoringDisplay
 			{
 				JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
 						+ "the range of 0 .. " + (cellNum - 1) + "\n Or the character to be any letter of the English"
-							+ "alphabet, either lower or upper case.");
+						+ "alphabet, either lower or upper case.");
 				works = false;
 			}
 		}
@@ -897,60 +821,60 @@ public class AuthoringDisplay
 		{
 			JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
 					+ "the range of 0 .. " + (cellNum - 1) + "\n Or the character to be any letter of the English"
-						+ "alphabet, either lower or upper case.");
-	        works = false;
+					+ "alphabet, either lower or upper case.");
+			works = false;
 		}
 		return works;
 	}
-	
+
 	//Used to check if the input of the set-voice method is correct
 	protected boolean checkVoice (String argument)
 	{
 		boolean works = false;
 		try
-	    {
+		{
 			works = true;
-	        int args = Integer.parseInt(argument);
-	        //Checks if the argument is a valid number from 1 .. 4
-	        if (args < 1 || args > 4)
-	        {
-	        	JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected a number from 1 .. 4 "
-	        			+ "to change the voice of the text to speech.");
-		        works = false;
-	        }
-	    }
+			int args = Integer.parseInt(argument);
+			//Checks if the argument is a valid number from 1 .. 4
+			if (args < 1 || args > 4)
+			{
+				JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected a number from 1 .. 4 "
+						+ "to change the voice of the text to speech.");
+				works = false;
+			}
+		}
 		//Throws an error pane of the argument is not a number
-	    catch (Exception e)
-	    {
-	    	JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected a number from 1 .. 4 "
-        			+ "to change the voice of the text to speech.");
-	    	works = false;
-	    }
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected a number from 1 .. 4 "
+					+ "to change the voice of the text to speech.");
+			works = false;
+		}
 		return works;
 	}
-	
+
 	//Used to check if the input of the sound method is correct
 	protected boolean checkSound (String argument)
 	{
 		boolean works = false;
 		try
-	    {
+		{
 			works = true;
-	        Clip clip = AudioSystem.getClip();
-	        clip.open(AudioSystem.getAudioInputStream(new File(scenarioFilePath + File.separator + "AudioFiles" + File.separator + argument)));
-	        clip.start();
-	        clip.close();  
-	    }
+			Clip clip = AudioSystem.getClip();
+			clip.open(AudioSystem.getAudioInputStream(new File(scenarioFilePath + File.separator + "AudioFiles" + File.separator + argument)));
+			clip.start();
+			clip.close();  
+		}
 		//Throws an error pane if the argument is not a valid sound file
-	    catch (Exception e)
-	    {
-	        JOptionPane.showMessageDialog(new JFrame (), "Sorry, that sound file does not exist or is of incorrect format.");
-	        works = false;
-	    }
+		catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(new JFrame (), "Sorry, that sound file does not exist or is of incorrect format.");
+			works = false;
+		}
 		return works;
 	}
-	
-	
+
+
 	//Method to highlight the text on the JTextArea
 	protected  void highlight ()
 	{
@@ -958,16 +882,16 @@ public class AuthoringDisplay
 		try 
 		{
 			highlighter.removeAllHighlights();
-	        int start = field.getLineStartOffset(highlightLocation);
-	        int end = field.getLineEndOffset(highlightLocation);
-	        numLines = field.getLineCount();
-	        highlighter.addHighlight(start, end, new DefaultHighlighter.DefaultHighlightPainter(Color.pink));
-	    } 
+			int start = field.getLineStartOffset(highlightLocation);
+			int end = field.getLineEndOffset(highlightLocation);
+			numLines = field.getLineCount();
+			highlighter.addHighlight(start, end, new DefaultHighlighter.DefaultHighlightPainter(Color.pink));
+		} 
 		catch (BadLocationException e) 
 		{
-	    }
+		}
 	}
-	
+
 	//Method to change the view of the JTextArea
 	public  void change (int index)
 	{
@@ -975,7 +899,7 @@ public class AuthoringDisplay
 		field.setText(nodes.get(index).display());
 
 	}
-	
+
 	//Method to add a child node to the current node
 	protected  void addChild (String identifier)
 	{
@@ -987,7 +911,7 @@ public class AuthoringDisplay
 			if (nodes.get(i).getIdentity().equals(identifier.split("\\s").length > 1))
 			{
 				moreThanOne = true;
-				
+
 			}
 			if (moreThanOne)
 			{
@@ -1019,13 +943,13 @@ public class AuthoringDisplay
 			else
 			{
 				nodes.get(update).getChild(nodes.get(update).getNumChildren() - 1).addInfo("/~" + identifier);
-			
+
 			}
 		}
 
 	}
-	
-	
+
+
 	//Used to add methods (i.e user-input, reset-buttons) that require no input
 	protected void addNoInput (String identifier, String title)
 	{
@@ -1033,32 +957,32 @@ public class AuthoringDisplay
 		JFrame frame = new JFrame(title);
 		SpringLayout layout = new SpringLayout ();
 
-	    frame.setVisible(true);
-	    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	    frame.setSize(300, 200);
-	    frame.setLocation(250, 150);
-	    JPanel panel = new JPanel();
-	    frame.add(panel);
-	    panel.setLayout(layout);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setSize(300, 200);
+		frame.setLocation(250, 150);
+		JPanel panel = new JPanel();
+		frame.add(panel);
+		panel.setLayout(layout);
 
-	    String [] choices = {"Add before highlighted text", "Add after highlighted text"};
+		String [] choices = {"Add before highlighted text", "Add after highlighted text"};
 
-	    //Creates a drop down menu list so the user can choose to add it before or after the highlighted text
-	    JComboBox<String> cb = new JComboBox<String>(choices);
-		    
+		//Creates a drop down menu list so the user can choose to add it before or after the highlighted text
+		JComboBox<String> cb = new JComboBox<String>(choices);
+
 		JButton okay = new JButton ("OK");
 		JButton cancel = new JButton ("Cancel");
-				
+
 		cb.setVisible(true);
-		  
+
 		panel.add(cb);
 		panel.add(okay);
-		
+
 		panel.add(cancel);
-		
+
 		//Adds in the line to the node if the user presses okay
 		okay.addActionListener(new ActionListener () {
-			
+
 			@Override
 			public void actionPerformed (ActionEvent arg0)
 			{
@@ -1079,14 +1003,14 @@ public class AuthoringDisplay
 		});
 		//The user closes the window if they press the cancel button 
 		cancel.addActionListener(new ActionListener () {
-				
+
 			@Override
 			public void actionPerformed (ActionEvent arg0)
 			{
 				frame.dispose();
 			}				
 		});
-		    
+
 		layout.putConstraint(SpringLayout.WEST, cb, 10, SpringLayout.WEST, panel);
 		layout.putConstraint(SpringLayout.NORTH, cb, 13, SpringLayout.NORTH, panel);
 		layout.putConstraint(SpringLayout.WEST, okay, 20, SpringLayout.WEST, panel);
@@ -1094,7 +1018,7 @@ public class AuthoringDisplay
 		layout.putConstraint(SpringLayout.WEST, cancel, 130, SpringLayout.WEST, panel);
 		layout.putConstraint(SpringLayout.SOUTH, cancel, -20, SpringLayout.SOUTH, panel);
 	}
-	
+
 	//Used to add methods that require additional arguments (i.e set-voice, sound)
 	public void add (String identifier, String title)
 	{
@@ -1102,21 +1026,21 @@ public class AuthoringDisplay
 		JFrame frame = new JFrame(title);
 		SpringLayout layout = new SpringLayout ();
 
-	    frame.setVisible(true);
-	    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	    frame.setSize(450, 350);
-	    frame.setLocation(430, 100);
-	    JPanel panel = new JPanel();
-	    frame.add(panel);
-	    panel.setLayout(layout);
-	    
-	    String [] choices = {"Add before highlighted text: ", "Add after highlighted text: "};
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setSize(450, 350);
+		frame.setLocation(430, 100);
+		JPanel panel = new JPanel();
+		frame.add(panel);
+		panel.setLayout(layout);
 
-	    //Creates a drop down menu list so the user can choose to add it before or after the highlighted text
-	    JComboBox<String> cb = new JComboBox<String>(choices);
-		    
-	    //Creates the JTextArea to get arguments from the user
-	    JTextArea area = new JTextArea (11, 17);
+		String [] choices = {"Add before highlighted text: ", "Add after highlighted text: "};
+
+		//Creates a drop down menu list so the user can choose to add it before or after the highlighted text
+		JComboBox<String> cb = new JComboBox<String>(choices);
+
+		//Creates the JTextArea to get arguments from the user
+		JTextArea area = new JTextArea (11, 17);
 		JScrollPane scroll = new JScrollPane (area);
 		JPanel textPane = new JPanel ();
 		JButton okay = new JButton ("OK");
@@ -1124,23 +1048,23 @@ public class AuthoringDisplay
 		JLabel lab = new JLabel ("Enter your lines in the box below:");
 		area.setFont(new Font ("Serif", Font.PLAIN, 16));
 		area.setLineWrap (true);
-	
+
 		area.setWrapStyleWord (true);
 		textPane.add(scroll);		    
 		panel.add(textPane);
-			
+
 		cb.setVisible(true);
-		  
+
 		panel.add(cb);
 		panel.add(okay);
-		 
+
 		panel.add(lab);
-		
+
 		panel.add(cancel);
-		
+
 		//Adds in the line if the user presses okay
 		okay.addActionListener(new ActionListener () {
-			
+
 			@Override
 			public void actionPerformed (ActionEvent arg0)
 			{
@@ -1160,26 +1084,51 @@ public class AuthoringDisplay
 						return;
 					}
 				}
-				//Checks if the user wants to add the method skip button and if arguments are valid
+				//Checks if the user wants to add a get answer part to the scetion of the scenario file
 				else if (title.equals("Add 'Skip-button'"))
 				{
-					if (checkSkipButton (area.getText ()) == false)
+					if (checkAnswerButton (area.getText ()) == false)
 					{
 						return;
 					}
-					addChild(area.getText());
-					drawMap ();
+					else
+					{
+						//Creates a new node which represents the answer, and that answer node links to a new question node
+						if (currNode.getNumChildren() == 0)
+						{
+							currNode.addInfo("/~skip-button:" + area.getText() + " ANSW" + numChange);
+							currNode.addInfo("/~user-input");
+							currNode.addChild(new SectionNode ("ANSW" + numChange));
+							numChange ++;
+							currNode.getChild(currNode.getNumChildren() - 1).addInfo(currNode.getChild(currNode.getNumChildren() - 1).getIdentity());
+							currNode.getChild(currNode.getNumChildren() - 1).addInfo("/~skip:QUES" + numChange);
+							currNode.getChild(currNode.getNumChildren()-1).addChild(new SectionNode("QUES" + numChange));	
+							currNode.getChild(currNode.getNumChildren()-1).getChild(0).addInfo(currNode.getChild(currNode.getNumChildren()-1).getChild(0).getIdentity());	
+						}
+						//Creates a new node which represents the answer, and that answer node links to an existing question node
+						else
+						{
+							currNode.getInfo().add(currNode.getInfo().size() - 1, "/~skip-button:" + area.getText() + " ANSW" + numChange);
+							currNode.addChild (new SectionNode ("ANSW" + numChange));
+							numChange ++;
+							currNode.getChild(currNode.getNumChildren() - 1).addInfo(currNode.getChild(currNode.getNumChildren() - 1).getIdentity());
+							currNode.getChild(currNode.getNumChildren() - 1).addInfo("/~skip:" + currNode.getChild(0).getChild(0).getIdentity().substring(2));
+						}
+						field.setText(nodes.get(update).display());
+						highlight();
+						frame.dispose();
+						return;
+					}
 				}
 				//Checks if the user wants to add the method skip and if arguments are valid
 				else if (title.equals("Add 'Skip to'"))
 				{
 					if (area.getLineCount () != 1 || (area.getText().trim().isEmpty() == true) || area.getText().length() == 0)
 					{
-				        JOptionPane.showMessageDialog(new JFrame (), "Please enter only one line that contains characters for a new identifier.");
-				        return;
+						JOptionPane.showMessageDialog(new JFrame (), "Please enter only one line that contains characters for a new identifier.");
+						return;
 					}
 					addChild(area.getText());
-					drawMap ();
 				}
 				//Checks if the user wants to add the method set-voice and if arguments are valid
 				else if (title.equals("Add 'Set-voice'"))
@@ -1230,7 +1179,7 @@ public class AuthoringDisplay
 					}
 					nodes.get(update).getInfo().remove(highlightLocation);
 					nodes.get(update).getInfo().add(highlightLocation, identifier + area.getText());
-					
+
 				}
 				else if (((String)(cb.getSelectedItem())).equals(choices[0]))
 				{
@@ -1262,17 +1211,17 @@ public class AuthoringDisplay
 				frame.dispose();
 			}				
 		});
-		    
+
 		//Closes the window and does no action if the user presses cancel
 		cancel.addActionListener(new ActionListener () {
-				
+
 			@Override
 			public void actionPerformed (ActionEvent arg0)
 			{
 				frame.dispose();
 			}				
 		});
-		    
+
 		layout.putConstraint(SpringLayout.WEST, cb, 10, SpringLayout.WEST, panel);
 		layout.putConstraint(SpringLayout.NORTH, cb, 13, SpringLayout.NORTH, panel);
 		layout.putConstraint(SpringLayout.WEST, textPane, 225, SpringLayout.WEST, panel);
@@ -1283,9 +1232,9 @@ public class AuthoringDisplay
 		layout.putConstraint(SpringLayout.NORTH, lab, 20, SpringLayout.NORTH, panel);
 		layout.putConstraint(SpringLayout.WEST, cancel, 130, SpringLayout.WEST, panel);
 		layout.putConstraint(SpringLayout.SOUTH, cancel, -20, SpringLayout.SOUTH, panel);
-			
+
 	}
-	
+
 	public static void main (String [] args)
 	{
 		AuthoringDisplay fr = new AuthoringDisplay (new JFrame (" Jello"));

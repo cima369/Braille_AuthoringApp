@@ -194,6 +194,11 @@ public class RevisedApp {
 
 		JMenuItem mntmMap = new JMenuItem("Map");
 		mnView.add(mntmMap);
+		mntmMap.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				disp.drawMap();
+			}
+		});
 		
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
