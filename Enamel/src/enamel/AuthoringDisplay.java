@@ -308,27 +308,27 @@ public class AuthoringDisplay
 		layout.putConstraint(SpringLayout.WEST, textPane, 221, SpringLayout.WEST, frame.getContentPane());
 		layout.putConstraint(SpringLayout.NORTH, textPane, 191, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, addLines, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, addLines, 25, SpringLayout.NORTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, addSound, 220, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, addSound, 25, SpringLayout.NORTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, dispChar, 400, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, dispChar, 25, SpringLayout.NORTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, answerButton, 220, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, answerButton, 90, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, addLines, 10, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, addSound, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, addSound, 45, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, dispChar, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, dispChar, 80, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, answerButton, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, answerButton, 115, SpringLayout.NORTH, frame.getContentPane());
 //		layout.putConstraint(SpringLayout.WEST, skipper, 220, SpringLayout.WEST, frame.getContentPane());
 //		layout.putConstraint(SpringLayout.NORTH, skipper, 90, SpringLayout.NORTH, frame.getContentPane());
 //		layout.putConstraint(SpringLayout.WEST, userInp, 400, SpringLayout.WEST, frame.getContentPane());
 //		layout.putConstraint(SpringLayout.NORTH, userInp, 90, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, repeatTextButton, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, repeatTextButton, 145, SpringLayout.NORTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, resetButton, 220, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, resetButton, 145, SpringLayout.NORTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, dispClearAll, 400, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, dispClearAll, 145, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, repeatTextButton, 150, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, resetButton, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, resetButton, 185, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, dispClearAll, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, dispClearAll, 220, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, options, 5, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, options, 220, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.NORTH, options, 230, SpringLayout.NORTH, frame.getContentPane());	
 		layout.putConstraint(SpringLayout.WEST, cb, 5, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, cb, 240, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.NORTH, cb, 250, SpringLayout.NORTH, frame.getContentPane());	
 		layout.putConstraint(SpringLayout.WEST, addOptions, 160, SpringLayout.WEST, frame.getContentPane());
 		layout.putConstraint(SpringLayout.NORTH, addOptions, 240, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, editButton, 60, SpringLayout.WEST, frame.getContentPane());
@@ -399,6 +399,7 @@ public class AuthoringDisplay
 		{
 			File f = fileName;
 			Scanner fileScanner = new Scanner (f);
+			SpringLayout layout = new SpringLayout ();
 			String absolutePath = f.getAbsolutePath();
 			scenarioFilePath = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator));
 
@@ -728,11 +729,12 @@ public class AuthoringDisplay
 			// Checks if the second argument is a valid 8 character string of 0 and 1
 			for (int x = 0; x < args [1].length(); x ++)
 			{
-				if (args[1].charAt(x) != '0' || args[1].charAt(x) != '1')
+				if (args[1].charAt(x) != '0' && args[1].charAt(x) != '1')
 				{
 					JOptionPane.showMessageDialog(new JFrame (), "Sorry, the arguments are incorrect. Expected cell number to be"
 							+ "the range of 0 .. " + (cellNum - 1) + "\n Or the string to have 8 characters of 1s and 0s.");
 					works = false;
+					return works;
 				}
 			}
 		}
@@ -1086,7 +1088,7 @@ public class AuthoringDisplay
 					}
 				}
 				//Checks if the user wants to add a get answer part to the scetion of the scenario file
-				else if (title.equals("Add 'Skip-button'"))
+				else if (title.equals("Add 'Getting answer'"))
 				{
 					if (checkAnswerButton (area.getText ()) == false)
 					{
@@ -1178,6 +1180,15 @@ public class AuthoringDisplay
 					{
 						return;
 					}
+					if (title.equals("Cell"))
+					{
+						cellNum = Integer.parseInt(area.getText());
+					}
+					else
+					{
+						buttonNum = Integer.parseInt(area.getText());
+
+					}
 					nodes.get(update).getInfo().remove(highlightLocation);
 					nodes.get(update).getInfo().add(highlightLocation, identifier + area.getText());
 
@@ -1236,4 +1247,8 @@ public class AuthoringDisplay
 
 	}
 
+	public static void main (String [] args)
+	{
+		AuthoringDisplay fr = new AuthoringDisplay (new JFrame (" Jello"));
+	}
 }

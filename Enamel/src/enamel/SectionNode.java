@@ -56,6 +56,10 @@ public class SectionNode
 			{
 				sb.append ("Identity is: " + i.substring(2) + "\n");
 			}
+			else if (i.length () >= 4 && i.substring(0, 4).equals("Cell") ||i.length () >= 6 && i.substring(0, 4).equals("Button"))
+			{
+				sb.append(i + "\n");
+			}
 			else if (i.length () >= 8 && i.substring(0, 8).equals("/~sound:"))
 			{
 				sb.append("Sound file to play: " + i.substring(8)+ "\n");
