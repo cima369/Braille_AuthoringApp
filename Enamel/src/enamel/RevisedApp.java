@@ -6,9 +6,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import java.awt.CardLayout;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import java.awt.Color;
@@ -17,12 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.util.Scanner;
 import java.awt.event.ActionEvent;
 
 public class RevisedApp {
@@ -64,7 +57,8 @@ public class RevisedApp {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	public void initialize() {
+	public void initialize() 
+	{
 		frmAuthoringApp = new JFrame();
 		disp = new AuthoringDisplay (frmAuthoringApp);
 		frmAuthoringApp.setResizable(false); //I set this to false so our status bar can properly function
@@ -74,39 +68,28 @@ public class RevisedApp {
 		frmAuthoringApp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmAuthoringApp.getContentPane().setLayout(null);
 
-		// this editable text area
-	//	textAreaBig = new JTextArea();
-	//	textAreaBig.setBounds(284, 29, 319, 288);
-	//	frmAuthoringApp.getContentPane().add(textAreaBig);
 
-		// initial status of the app
 		status = new JLabel("Welcome to Team3's Authoring App!");
 		status.setLabelFor(frmAuthoringApp);
 		status.setBackground(Color.WHITE);
 		status.setBounds(0, 480, 602, 14);
 		frmAuthoringApp.getContentPane().add(status);
 
-		// Menu bar
 		JMenuBar menuBar = new JMenuBar();
 		frmAuthoringApp.setJMenuBar(menuBar);
 
-		// File Chooser
 		fileSelect = new JFileChooser();
 
-		
-		// Components of the menu bar
 
-		// #1
-		// Components under File mn
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 
 		JMenuItem mntmNewMenuItem = new JMenuItem("New");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (JOptionPane.showConfirmDialog(null, "Are you sure you want to create a new file?") == 0) {
-					//textAreaBig.setText("");
-					//status.setText("Generated New File....."); //the empty text area created is the new file
+				if (JOptionPane.showConfirmDialog(null, "Are you sure you want to create a new file?") == 0) 
+				{
+
 					disp.newFile ();
 				}
 			}
@@ -124,11 +107,10 @@ public class RevisedApp {
 						"All unsaved work will be deleted. Would like to proceed?") == 0) {
 					int openResult = fileSelect.showOpenDialog(null);
 
-					if (openResult == JFileChooser.APPROVE_OPTION) {
-						
-						//openFile(fileSelect.getSelectedFile());
+					if (openResult == JFileChooser.APPROVE_OPTION) 
+					{
+
 						disp.open(fileSelect.getSelectedFile());
-					//	status.setText("Opened File...");
 					}
 
 				}
@@ -158,7 +140,7 @@ public class RevisedApp {
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Save As");
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int saveResult = fileSelect.showSaveDialog(null);
+				fileSelect.showSaveDialog(null);
 				saveFile(fileSelect.getSelectedFile());
 				status.setText("File Saved...");
 			}
@@ -188,10 +170,11 @@ public class RevisedApp {
 		JMenuItem mntmRecording = new JMenuItem("Recording");
 		mnVoice.add(mntmRecording);
 
-		// #3 components under view
+		//Components under view
 		JMenu mnView = new JMenu("View");
 		menuBar.add(mnView);
 
+		//Map menu item to pull up the map of the scenario file broken into nodes
 		JMenuItem mntmMap = new JMenuItem("Map");
 		mnView.add(mntmMap);
 		mntmMap.addActionListener(new ActionListener() {
@@ -199,38 +182,40 @@ public class RevisedApp {
 				disp.drawMap();
 			}
 		});
-		
+
+		//Help menu item to display the help menu window
 		JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
-		
+
+		//About menu item to display the window that displays the about information
 		JMenuItem mntmAbout = new JMenuItem("About");
 		mntmAbout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				aboutFrame = new AboutFrame();
-                aboutFrame.setSize(600, 400);
-                aboutFrame.setVisible(true);
-                aboutFrame.setResizable(false);
-                aboutFrame.setLocationRelativeTo(null);
-        }
-			
+				aboutFrame.setSize(600, 400);
+				aboutFrame.setVisible(true);
+				aboutFrame.setResizable(false);
+				aboutFrame.setLocationRelativeTo(null);
+			}
+
 		});
 		mnHelp.add(mntmAbout);
-		
+
 		JMenuItem mntmHelp = new JMenuItem("Help Contents");
 		mntmHelp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				helpFrame = new HelpFrame();
-                helpFrame.setSize(600, 620);
-                helpFrame.setVisible(true);
-                helpFrame.setResizable(false);
-                helpFrame.setLocationRelativeTo(null);
+				helpFrame.setSize(600, 620);
+				helpFrame.setVisible(true);
+				helpFrame.setResizable(false);
+				helpFrame.setLocationRelativeTo(null);
 			}
 		});
 		mnHelp.add(mntmHelp);
-		
-		
+
+
 	}
 
 	//this method is used to implement save and Save As feature
@@ -251,44 +236,5 @@ public class RevisedApp {
 
 		}
 	}
-
-	//this method is used to load and open file
-	public void openFile(File file) {
-		if (file.canRead()) {
-
-			String filePath = file.getPath();
-			String fileContents = "";
-			String fileName = "";
-
-			if (filePath.endsWith(".txt")) {
-				try {
-					Scanner scan = new Scanner(new FileInputStream(file));
-					while (scan.hasNextLine()) {
-						sb.append(scan.nextLine());
-						sb.append("\n");
-
-					}
-					sb2.append(file.getName());
-					fileName = sb2.toString();
-					fileContents = sb.toString();
-
-					scan.close();
-				} catch (FileNotFoundException e) {
-
-				}
-
-				textAreaBig.setText(fileContents);
-
-				// sets the frame title to that of the file path
-				// can use the whole file path or just file name
-				// use the one you feel you be best
-				frmAuthoringApp.setTitle("Authoring App" + filePath + fileName);
-				currentFile = file;
-			} else {
-				JOptionPane.showMessageDialog(null, "That file type is not supported!\nOnly .txt files are supported.");
-
-			}
-		} else
-			JOptionPane.showMessageDialog(null, "Could not open file");
-	}
+	
 }
