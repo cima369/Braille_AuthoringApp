@@ -208,7 +208,6 @@ public class RevisedApp {
 			public void actionPerformed(ActionEvent e)
 			{
 				aboutFrame = new AboutFrame();
-                
                 aboutFrame.setSize(600, 400);
                 aboutFrame.setVisible(true);
                 aboutFrame.setResizable(false);
