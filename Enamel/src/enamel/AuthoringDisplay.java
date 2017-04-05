@@ -122,7 +122,7 @@ public class AuthoringDisplay
 			@Override
 			public void actionPerformed (ActionEvent arg0)
 			{
-				add ("/~skip-button:", "Add 'Skip-button'");
+				add ("/~skip-button:", "Add 'Getting answer'");
 			}				
 		});
 
@@ -499,12 +499,12 @@ public class AuthoringDisplay
 		}
 	}
 	//Save function
-	protected void save ()
+	protected void save (String filePath)
 	{
 		try
 		{
 			// Writes to the saved file
-			PrintWriter writer = new PrintWriter("SampleScenarios/Scenario_Temp.txt");
+			PrintWriter writer = new PrintWriter(filePath);
 			q.add(root);
 			SectionNode n;
 
@@ -526,10 +526,12 @@ public class AuthoringDisplay
 				}
 			}
 			writer.close();
+			scenarioFilePath = filePath.substring(0, filePath.lastIndexOf(File.separator));
 		} 
 		catch (IOException e) 
 		{
 			// do something
+			JOptionPane.showMessageDialog(new JFrame (), "Error in saving file.");
 		}
 	}
 
