@@ -35,7 +35,6 @@ public class AuthoringDisplay
 	protected int update = 0;
 	protected boolean question;
     protected int numChange = 0;
-    protected int numberQ = 1;
     
 	public AuthoringDisplay(JFrame fr) 
 	{
@@ -554,6 +553,7 @@ public class AuthoringDisplay
 		JFrame frame = new JFrame("Map");
 		JPanel panel = new JPanel();
 		nodes.clear ();
+	    int numberQ = 1;
 		int incrementer = 0;
 		boolean first = true;
 		BoxLayout boxY = new BoxLayout (panel, BoxLayout.Y_AXIS);
