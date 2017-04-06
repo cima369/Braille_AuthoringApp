@@ -70,7 +70,7 @@ public class SectionNodeTest {
 		assertTrue(nodeTwo.getInfo().get(0).equals("Children"));
 		assertTrue(nodeThree.getInfo().get(0).equals("Third"));
 		assertTrue(nodeFour.getInfo().get(0).equals("/~Sound"));
-		assertTrue(nodeFour.getInfo().get(0).equals("Root"));
+		assertTrue(nodeFive.getInfo().get(0).equals("Root"));
 				
 	}
 
