@@ -21,7 +21,7 @@ public class AuthoringDisplay
 	// Used to store the different sections
 	protected ArrayList <String> identifiers; 
 	protected ArrayList <SectionNode> nodes;
-	protected JTextArea field = new JTextArea (14, 32);
+	protected JTextArea field;
 	protected JFrame frame = new JFrame ();
 	protected SectionNode currNode;
 	protected SectionNode root;
@@ -39,7 +39,7 @@ public class AuthoringDisplay
     
 	public AuthoringDisplay(JFrame fr) 
 	{
-		field = new JTextArea (14, 32);
+		field = new JTextArea (21, 32);
 		frame = fr;
 		SpringLayout layout = new SpringLayout ();
 		nodes = new ArrayList <SectionNode> ();
@@ -233,11 +233,9 @@ public class AuthoringDisplay
 		});
 		//This button allows the edit of the cell and button options
 		editButton.addActionListener(new ActionListener () {
-
 			@Override
 			public void actionPerformed (ActionEvent arg0)
 			{
-
 				try
 				{
 					int start = field.getLineStartOffset(highlightLocation);
@@ -271,8 +269,6 @@ public class AuthoringDisplay
 		frame.getContentPane().add (addSound);
 		frame.getContentPane().add (dispChar);
 		frame.getContentPane().add (answerButton);
-//		frame.getContentPane().add (skipper);
-//		frame.getContentPane().add (userInp);
 		frame.getContentPane().add (repeatTextButton);
 		frame.getContentPane().add (resetButton);
 		frame.getContentPane().add (dispClearAll);
@@ -286,7 +282,7 @@ public class AuthoringDisplay
 
 		//Defines the layout of the buttons
 		layout.putConstraint(SpringLayout.WEST, textPane, 221, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, textPane, 191, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, textPane, 20, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, addLines, 40, SpringLayout.WEST, frame.getContentPane());
 		layout.putConstraint(SpringLayout.NORTH, addLines, 20, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, addSound, 40, SpringLayout.WEST, frame.getContentPane());
@@ -1219,6 +1215,7 @@ public class AuthoringDisplay
 			}				
 		});
 
+		//Sets the layout positions of the buttons and text area
 		layout.putConstraint(SpringLayout.WEST, cb, 10, SpringLayout.WEST, panel);
 		layout.putConstraint(SpringLayout.NORTH, cb, 13, SpringLayout.NORTH, panel);
 		layout.putConstraint(SpringLayout.WEST, textPane, 225, SpringLayout.WEST, panel);
