@@ -18,9 +18,9 @@ public class AudioRecording extends JFrame {
 	final JPanel btnPanel = new JPanel();
 	JFileChooser chooser = new JFileChooser();
 
-	public static void main(String args[]) {
+/*	public static void main(String args[]) {
 		new AudioRecording();
-	}
+	} */
 
 	public AudioRecording() {
 		captureBtn.setEnabled(true);
@@ -98,7 +98,8 @@ public class AudioRecording extends JFrame {
 
 			fileType = AudioFileFormat.Type.WAVE;
 			
-			audioFile = new File(fileName.getText() + ".wav");
+			audioFile = new File("SampleScenarios" + File.separator + "AudioFiles" + 
+			File.separator + fileName.getText() + ".wav");
 
 			try {
 				targetDataLine.open(audioFormat);

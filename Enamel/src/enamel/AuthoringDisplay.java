@@ -35,10 +35,10 @@ public class AuthoringDisplay
 	protected int update = 0;
 	protected boolean question;
     protected int numChange = 0;
-
+    protected int numberQ = 1;
+    
 	public AuthoringDisplay(JFrame fr) 
 	{
-		// TODO Auto-generated constructor stub
 		field = new JTextArea (14, 32);
 		frame = fr;
 		SpringLayout layout = new SpringLayout ();
@@ -73,8 +73,6 @@ public class AuthoringDisplay
 		JButton addSound = new JButton ("Add 'Sound file'");
 		JButton dispChar = new JButton ("Add 'Display char'");
 		JButton answerButton = new JButton ("Add 'Create answer'");
-	//	JButton skipper = new JButton ("Add 'Skip to'");
-	//	JButton userInp = new JButton ("Add 'Get user-input'"); 
 		JButton repeatTextButton = new JButton ("Add 'Repeat'");
 		JButton resetButton = new JButton ("Add 'Reset buttons'");
 		JButton dispClearAll = new JButton ("Add 'Clear all display'");
@@ -126,24 +124,6 @@ public class AuthoringDisplay
 			}				
 		});
 
-/*		skipper.addActionListener(new ActionListener () {
-
-			@Override
-			public void actionPerformed (ActionEvent arg0)
-			{
-				add ("/~skip:", "Add 'Skip to'");
-			}				
-		}); */
-
-		//This button allows the user to wait for user-input
-/*		userInp.addActionListener(new ActionListener () {
-
-			@Override
-			public void actionPerformed (ActionEvent arg0)
-			{
-				addNoInput ("/~user-input", "Add 'Get user-input'");
-			}				
-		}); */
 
 		//This button allows the user to add repeated text
 		repeatTextButton.addActionListener(new ActionListener () {
@@ -308,37 +288,33 @@ public class AuthoringDisplay
 		layout.putConstraint(SpringLayout.WEST, textPane, 221, SpringLayout.WEST, frame.getContentPane());
 		layout.putConstraint(SpringLayout.NORTH, textPane, 191, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, addLines, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, addLines, 10, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, addLines, 20, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, addSound, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, addSound, 45, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, addSound, 60, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, dispChar, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, dispChar, 80, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, dispChar, 100, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, answerButton, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, answerButton, 115, SpringLayout.NORTH, frame.getContentPane());
-//		layout.putConstraint(SpringLayout.WEST, skipper, 220, SpringLayout.WEST, frame.getContentPane());
-//		layout.putConstraint(SpringLayout.NORTH, skipper, 90, SpringLayout.NORTH, frame.getContentPane());
-//		layout.putConstraint(SpringLayout.WEST, userInp, 400, SpringLayout.WEST, frame.getContentPane());
-//		layout.putConstraint(SpringLayout.NORTH, userInp, 90, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, answerButton, 140, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, repeatTextButton, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, repeatTextButton, 150, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, repeatTextButton, 180, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, resetButton, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, resetButton, 185, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, resetButton, 220, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, dispClearAll, 40, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, dispClearAll, 220, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, dispClearAll, 260, SpringLayout.NORTH, frame.getContentPane());
 		layout.putConstraint(SpringLayout.WEST, options, 5, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, options, 230, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.NORTH, options, 300, SpringLayout.NORTH, frame.getContentPane());	
 		layout.putConstraint(SpringLayout.WEST, cb, 5, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, cb, 250, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.NORTH, cb, 320, SpringLayout.NORTH, frame.getContentPane());	
 		layout.putConstraint(SpringLayout.WEST, addOptions, 160, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, addOptions, 240, SpringLayout.NORTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, editButton, 60, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, editButton, 300, SpringLayout.NORTH, frame.getContentPane());	
-		layout.putConstraint(SpringLayout.WEST, deleteButton, 60, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.NORTH, deleteButton, 360, SpringLayout.NORTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, upButton, 20, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.SOUTH, upButton, -60, SpringLayout.SOUTH, frame.getContentPane());
-		layout.putConstraint(SpringLayout.WEST, downButton, 140, SpringLayout.WEST, frame.getContentPane());
-		layout.putConstraint(SpringLayout.SOUTH, downButton, -60, SpringLayout.SOUTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.NORTH, addOptions, 320, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, editButton, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, editButton, 360, SpringLayout.NORTH, frame.getContentPane());	
+		layout.putConstraint(SpringLayout.WEST, deleteButton, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, deleteButton, 400, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, upButton, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, upButton, 440, SpringLayout.NORTH, frame.getContentPane());
+		layout.putConstraint(SpringLayout.WEST, downButton, 40, SpringLayout.WEST, frame.getContentPane());
+		layout.putConstraint(SpringLayout.NORTH, downButton, 480, SpringLayout.SOUTH, frame.getContentPane());	
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -399,7 +375,6 @@ public class AuthoringDisplay
 		{
 			File f = fileName;
 			Scanner fileScanner = new Scanner (f);
-			SpringLayout layout = new SpringLayout ();
 			String absolutePath = f.getAbsolutePath();
 			scenarioFilePath = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator));
 
@@ -507,7 +482,6 @@ public class AuthoringDisplay
 			PrintWriter writer = new PrintWriter(filePath);
 			q.add(root);
 			SectionNode n;
-
 			//Breadth first searching to save a well file formatted tree
 			while (!q.isEmpty())
 			{
@@ -591,7 +565,7 @@ public class AuthoringDisplay
 		panel.setLayout(boxY);
 		q.add(root);
 		SectionNode n;
-		mapButtons.add(new JButton ("Identity: " + root.getIdentity() + " " + question));
+		mapButtons.add(new JButton ("Introduction - Question " +  numberQ));
 		panel.add(mapButtons.get(incrementer));
 		incrementer ++;
 		while (!q.isEmpty())
@@ -599,7 +573,7 @@ public class AuthoringDisplay
 			first = true;
 			n = q.pop ();
 			nodes.add(n);
-
+			int answerQ = 1;
 			for (int a = 0; a < n.getNumChildren (); a ++)
 			{
 				if (!q.contains(n.getChild(a)))
@@ -609,15 +583,25 @@ public class AuthoringDisplay
 					{
 						panel.add(Box.createRigidArea (new Dimension (0, 35)));
 						first = false;
-							question = !question;
-						
+						question = !question;
 
 					}
 					
-					mapButtons.add(new JButton ("Identity: " + n.getChild(a).getIdentity() + "  " + question));
+					if (question)
+					{
+						mapButtons.add(new JButton ("Answer: " + numberQ + " - " + answerQ));
+					}
+					else
+					{
+						numberQ ++;
+						mapButtons.add(new JButton ("Question: " + numberQ));
+						
+
+					}
 					panel.add(mapButtons.get(incrementer));
 					incrementer++;
 					q.add(n.getChild(a));
+					answerQ ++;
 
 				}
 			}
@@ -1193,6 +1177,7 @@ public class AuthoringDisplay
 					nodes.get(update).getInfo().add(highlightLocation, identifier + area.getText());
 
 				}
+				//Adds normal text to be repeated
 				else if (((String)(cb.getSelectedItem())).equals(choices[0]))
 				{
 					if (title.equals("Add 'Repeat'"))
@@ -1245,10 +1230,5 @@ public class AuthoringDisplay
 		layout.putConstraint(SpringLayout.WEST, cancel, 130, SpringLayout.WEST, panel);
 		layout.putConstraint(SpringLayout.SOUTH, cancel, -20, SpringLayout.SOUTH, panel);
 
-	}
-
-	public static void main (String [] args)
-	{
-		AuthoringDisplay fr = new AuthoringDisplay (new JFrame (" Jello"));
 	}
 }
